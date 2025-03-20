@@ -6,9 +6,11 @@
         "@azure/msal-browser": "^2.30.0",
         "@azure/msal-react": "^1.4.9",
         "bootstrap": "^5.2.1",
+        "ldrs": "^1.1.2",
         "react": "^18.2.0",
         "react-bootstrap": "^2.5.0",
         "react-dom": "^18.2.0",
+        "styled-components": "^6.1.16",
         "web-vitals": "^2.1.4"
     },
     "devDependencies": {

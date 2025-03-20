@@ -1,67 +1,43 @@
-import React, { useState } from 'react';
-import './styles/App.css';
-import { PageLayout } from './components/PageLayout';
-import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
-import Button from 'react-bootstrap/Button';
-import { loginRequest } from './authConfig';
-import { callMsGraph } from './graph';
-import { ProfileData } from './components/ProfileData';
-
-
-/**
- * Renders information about the signed-in user or a button to retrieve data about the user
- */
-const ProfileContent = () => {
-    const { instance, accounts } = useMsal();
-    const [graphData, setGraphData] = useState(null);
-
-    function RequestProfileData() {
-        // Silently acquires an access token which is then attached to a request for MS Graph data
-        instance
-            .acquireTokenSilent({
-                ...loginRequest,
-                account: accounts[0],
-            })
-            .then((response) => {
-                callMsGraph(response.accessToken).then((response) => setGraphData(response));
-            });
-    }
-
-    return (
-        <>
-            <h5 className="card-title">Welcome {accounts[0].name}</h5>
-            {graphData ? (
-                <ProfileData graphData={graphData} />
-            ) : (
-                <Button variant="secondary" onClick={RequestProfileData}>
-                    Request Profile Information
-                </Button>
-            )}
-        </>
-    );
-};
+import React from "react";
+import {
+  AuthenticatedTemplate,
+  UnauthenticatedTemplate,
+} from "@azure/msal-react";
+import { PageLayout } from "./components/PageLayout";
+import MainTable from "./components/MainTable";
+import styled from "styled-components";
 
 /**
- * If a user is authenticated the ProfileContent component above is rendered. Otherwise a message indicating a user is not authenticated is rendered.
+ * If a user is authenticated, the ProfileContent component above is rendered. Otherwise, a message indicating a user is not authenticated is rendered.
  */
 const MainContent = () => {
-    return (
-        <div className="App">
-            <AuthenticatedTemplate>
-                <ProfileContent />
-            </AuthenticatedTemplate>
+  return (
+    <CenteredContainer>
+      <AuthenticatedTemplate>
+        <MainTable />
+      </AuthenticatedTemplate>
 
-            <UnauthenticatedTemplate>
-                <h5 className="card-title">Please sign-in to see your profile information.</h5>
-            </UnauthenticatedTemplate>
-        </div>
-    );
+      <UnauthenticatedTemplate></UnauthenticatedTemplate>
+    </CenteredContainer>
+  );
 };
 
 export default function App() {
-    return (
-        <PageLayout>
-            <MainContent />
-        </PageLayout>
-    );
+  return (
+    <>
+      <PageLayout>
+        <MainContent />
+      </PageLayout>
+    </>
+  );
 }
+
+const CenteredContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 50px;
+  flex-direction: column; /* Center vertically */
+  text-align: center; /* Ensure the text is centered */
+  font-size: 15px;
+`;

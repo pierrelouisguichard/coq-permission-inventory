@@ -1,38 +1,77 @@
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
+import React from "react";
+import styled from "styled-components";
+import { useIsAuthenticated } from "@azure/msal-react";
+import { SignInButton, SignOutButton } from "./SignInOutButtons";
+import logo from "../assets/logo.png";
 
-import React from 'react';
-import Navbar from 'react-bootstrap/Navbar';
-
-import { useIsAuthenticated } from '@azure/msal-react';
-import { SignInButton } from './SignInButton';
-import { SignOutButton } from './SignOutButton';
-
-/**
- * Renders the navbar component with a sign-in or sign-out button depending on whether or not a user is authenticated
- * @param props
- */
 export const PageLayout = (props) => {
-    const isAuthenticated = useIsAuthenticated();
+  const isAuthenticated = useIsAuthenticated();
+  const currentDate = new Date();
+  const currentMonth = currentDate.toLocaleString("default", {
+    month: "short",
+  });
+  const currentYear = currentDate.getFullYear();
 
-    return (
-        <>
-            <Navbar bg="primary" variant="dark" className="navbarStyle">
-                <a className="navbar-brand" href="/">
-                    Microsoft Identity Platform
-                </a>
-                <div className="collapse navbar-collapse justify-content-end">
-                    {isAuthenticated ? <SignOutButton /> : <SignInButton />}
-                </div>
-            </Navbar>
-            <h5>
-                <center>Welcome to the Microsoft Authentication Library For Javascript - React Quickstart</center>
-            </h5>
-            <br />
-            <br />
-            {props.children}
-        </>
-    );
+  return (
+    <>
+      <StyledNavbar>
+        <NavbarLeft>
+          <Logo src={logo} alt="Coquillade Logo" />
+          <Title>
+            Coquillade: New Server Structure {currentMonth} {currentYear}
+          </Title>
+        </NavbarLeft>
+        <NavbarRight>
+          {isAuthenticated ? <SignOutButton /> : <SignInButton />}
+        </NavbarRight>
+      </StyledNavbar>
+      <MainContent>{props.children}</MainContent>
+    </>
+  );
 };
+
+const StyledNavbar = styled.nav`
+  background-color: #a88c7c;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+`;
+
+const NavbarLeft = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const NavbarRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const Title = styled.h2`
+  color: white;
+  font-size: 1.5rem;
+  margin: 0;
+  margin-left: 1rem;
+  font-weight: 600;
+  text-transform: capitalize;
+`;
+
+const Logo = styled.img`
+  height: 70px;
+  border-radius: 8px;
+`;
+
+const MainContent = styled.main`
+  padding: 2rem;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 60px);
+  font-family: "Arial", sans-serif;
+  color: #333;
+`;
